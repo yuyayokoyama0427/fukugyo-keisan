@@ -1,5 +1,7 @@
 import React from 'react'
 
+const MAX_JOBS = 20
+
 const DEFAULT_JOB = { name: '', income: '', expense: '' }
 
 export default function SideJobList({ jobs, onChange }) {
@@ -13,6 +15,7 @@ export default function SideJobList({ jobs, onChange }) {
   }
 
   const handleAdd = () => {
+    if (jobs.length >= MAX_JOBS) return
     onChange([...jobs, { ...DEFAULT_JOB }])
   }
 
@@ -94,12 +97,14 @@ export default function SideJobList({ jobs, onChange }) {
         ))}
       </div>
 
-      <button
-        onClick={handleAdd}
-        className="mt-4 w-full border-2 border-dashed border-blue-200 hover:border-blue-400 text-blue-500 hover:text-blue-700 rounded-xl py-2.5 text-sm font-medium transition-colors"
-      >
-        + 副業を追加
-      </button>
+      {jobs.length < MAX_JOBS && (
+        <button
+          onClick={handleAdd}
+          className="mt-4 w-full border-2 border-dashed border-blue-200 hover:border-blue-400 text-blue-500 hover:text-blue-700 rounded-xl py-2.5 text-sm font-medium transition-colors"
+        >
+          + 副業を追加
+        </button>
+      )}
     </div>
   )
 }
