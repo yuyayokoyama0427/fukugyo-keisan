@@ -51,7 +51,7 @@ export default function ProModal({ isOpen, onClose, onActivate, isLoading, error
           <ul className="space-y-2 text-sm text-blue-800">
             <li className="flex items-center gap-2">
               <span className="text-blue-500 font-bold">&#10003;</span>
-              複数副業（最大5件）の合算計算
+              複数副業（最大20件）の合算計算
             </li>
             <li className="flex items-center gap-2">
               <span className="text-blue-500 font-bold">&#10003;</span>
