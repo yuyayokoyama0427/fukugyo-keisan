@@ -1,7 +1,5 @@
 import React from 'react'
 
-const MAX_JOBS = 5
-
 const DEFAULT_JOB = { name: '', income: '', expense: '' }
 
 export default function SideJobList({ jobs, onChange }) {
@@ -15,7 +13,6 @@ export default function SideJobList({ jobs, onChange }) {
   }
 
   const handleAdd = () => {
-    if (jobs.length >= MAX_JOBS) return
     onChange([...jobs, { ...DEFAULT_JOB }])
   }
 
@@ -28,7 +25,7 @@ export default function SideJobList({ jobs, onChange }) {
     <div className="bg-white rounded-2xl shadow-md p-6">
       <div className="flex items-center justify-between mb-5">
         <h2 className="text-lg font-bold text-blue-800">副業の入力（複数対応）</h2>
-        <span className="text-xs text-gray-400">最大{MAX_JOBS}件</span>
+        <span className="text-xs text-gray-400">{jobs.length}件</span>
       </div>
 
       <div className="space-y-4">
@@ -97,14 +94,12 @@ export default function SideJobList({ jobs, onChange }) {
         ))}
       </div>
 
-      {jobs.length < MAX_JOBS && (
-        <button
-          onClick={handleAdd}
-          className="mt-4 w-full border-2 border-dashed border-blue-200 hover:border-blue-400 text-blue-500 hover:text-blue-700 rounded-xl py-2.5 text-sm font-medium transition-colors"
-        >
-          + 副業を追加
-        </button>
-      )}
+      <button
+        onClick={handleAdd}
+        className="mt-4 w-full border-2 border-dashed border-blue-200 hover:border-blue-400 text-blue-500 hover:text-blue-700 rounded-xl py-2.5 text-sm font-medium transition-colors"
+      >
+        + 副業を追加
+      </button>
     </div>
   )
 }
