@@ -58,6 +58,7 @@ export default function ResultDashboard({ result }) {
     takeHomeIncrease,
     needsTaxReturn,
     baleRisk,
+    furusatoLimit,
     monthlyData,
     activeMonths,
   } = result
@@ -156,6 +157,20 @@ export default function ResultDashboard({ result }) {
           ))}
         </div>
       </div>
+
+      {/* ふるさと納税 */}
+      {furusatoLimit > 0 && (
+        <div className="bg-white rounded-2xl shadow-md p-6">
+          <h2 className="text-lg font-bold text-blue-800 mb-3">🏡 ふるさと納税の目安上限</h2>
+          <div className="flex items-center gap-4">
+            <p className="text-3xl font-bold text-green-600">{formatYen(furusatoLimit)}</p>
+            <p className="text-xs text-gray-500">（2,000円の自己負担を含む）</p>
+          </div>
+          <p className="text-xs text-gray-400 mt-3">
+            ※ 副業収入を含めた課税所得をもとにした簡易計算です。家族構成・医療費控除などにより実際の上限は異なります。
+          </p>
+        </div>
+      )}
 
       {/* グラフ */}
       <AnnualChart data={monthlyData} />

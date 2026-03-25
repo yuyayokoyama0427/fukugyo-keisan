@@ -170,6 +170,13 @@ export function calculate(inputs) {
     })
   }
 
+  // ふるさと納税の目安上限
+  // 式：住民税所得割額 × 20% / (1 - 所得税率 × 1.021 - 0.1) + 2000
+  const incomeTaxRate = INCOME_TAX_TABLE.find(b => totalTaxableIncome <= b.limit)?.rate ?? 0.45
+  const furusatoLimit = totalResidentTax > 0
+    ? Math.floor(totalResidentTax * 0.2 / (1 - incomeTaxRate * 1.021 - 0.1)) + 2000
+    : 0
+
   return {
     // 基本情報
     activeMonths,
@@ -190,6 +197,9 @@ export function calculate(inputs) {
 
     // 会社バレリスク
     baleRisk,
+
+    // ふるさと納税
+    furusatoLimit,
 
     // グラフデータ
     monthlyData,
