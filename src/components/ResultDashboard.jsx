@@ -65,6 +65,23 @@ export default function ResultDashboard({ result }) {
 
   return (
     <div className="space-y-5">
+      {/* 会社バレ警告バナー */}
+      {baleRisk !== 'low' && (
+        <div className={`rounded-2xl p-4 flex items-start gap-3 ${baleRisk === 'high' ? 'bg-red-50 border border-red-200' : 'bg-yellow-50 border border-yellow-200'}`}>
+          <span className="text-xl mt-0.5">{baleRisk === 'high' ? '⚠️' : '💡'}</span>
+          <div>
+            <p className={`text-sm font-bold mb-1 ${baleRisk === 'high' ? 'text-red-700' : 'text-yellow-700'}`}>
+              {baleRisk === 'high' ? '会社バレリスク：高' : '会社バレリスク：中'}
+            </p>
+            <p className={`text-xs ${baleRisk === 'high' ? 'text-red-600' : 'text-yellow-600'}`}>
+              {baleRisk === 'high'
+                ? '確定申告時に住民税の徴収方法を「普通徴収（自分で納付）」に設定してください。設定しないと会社の給与に上乗せされバレる可能性があります。'
+                : '住民税の申告を行う場合は「普通徴収」を選択しましょう。'}
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* サマリーカード */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <StatCard
