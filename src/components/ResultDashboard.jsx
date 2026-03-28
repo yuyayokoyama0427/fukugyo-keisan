@@ -2,6 +2,7 @@ import React from 'react'
 import AnnualChart from './AnnualChart'
 
 function formatYen(amount) {
+  if (!isFinite(amount) || isNaN(amount)) return '—'
   if (amount >= 10000) {
     return `${Math.round(amount / 10000).toLocaleString()}万円`
   }
@@ -63,6 +64,12 @@ export default function ResultDashboard({ result }) {
     activeMonths,
   } = result
 
+  function handleXShare() {
+    const text = `副業で年間${formatYen(takeHomeIncrease)}増えることが判明！\n税金は${formatYen(totalTaxIncrease)}増加。\n副業ぜんぶ計算くんで計算してみよう👇`
+    const url = 'https://fukugyo-keisan.vercel.app'
+    window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank')
+  }
+
   return (
     <div className="space-y-5">
       {/* 会社バレ警告バナー */}
@@ -97,6 +104,17 @@ export default function ResultDashboard({ result }) {
           accent="border-red-400"
         />
       </div>
+
+      {/* Xシェア */}
+      <button
+        onClick={handleXShare}
+        className="w-full flex items-center justify-center gap-2 bg-black hover:bg-gray-800 text-white font-semibold py-3 rounded-2xl transition-colors text-sm"
+      >
+        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+        </svg>
+        結果をXでシェアする
+      </button>
 
       {/* 確定申告・会社バレ */}
       <div className="bg-white rounded-2xl shadow-md p-6">

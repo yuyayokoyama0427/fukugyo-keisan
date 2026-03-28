@@ -5,7 +5,8 @@ const MONTHS = [1,2,3,4,5,6,7,8,9,10,11,12]
 export default function InputForm({ values, onChange, hideSideFields = false }) {
   const handleChange = (e) => {
     const { name, value } = e.target
-    onChange({ ...values, [name]: value === '' ? '' : Number(value) })
+    const num = Number(value)
+    onChange({ ...values, [name]: value === '' ? '' : (isNaN(num) || num < 0 ? 0 : num) })
   }
 
   return (
@@ -30,6 +31,18 @@ export default function InputForm({ values, onChange, hideSideFields = false }) 
               className="w-full border border-gray-300 rounded-lg px-4 py-2.5 pr-12 text-right text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
             />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">万円</span>
+          </div>
+          <div className="flex gap-1.5 mt-2">
+            {[300, 500, 700, 1000].map(v => (
+              <button
+                key={v}
+                type="button"
+                onClick={() => onChange({ ...values, mainJobIncome: v })}
+                className="flex-1 text-xs border border-gray-300 rounded-lg py-1 text-gray-600 hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+              >
+                {v}万
+              </button>
+            ))}
           </div>
           <p className="text-xs text-gray-400 mt-1">税込み・手取りではなく額面で入力</p>
         </div>

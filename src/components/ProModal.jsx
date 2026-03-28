@@ -67,6 +67,7 @@ export default function ProModal({ isOpen, onClose, onActivate, isLoading, error
         <div className="p-6 space-y-5">
           {/* 購入リンク */}
           <div className="text-center">
+            <p className="text-2xl font-bold text-blue-900 mb-1">月額 300円<span className="text-sm font-normal text-gray-500">（税込）</span></p>
             <p className="text-sm text-gray-600 mb-3">まだ購入していない方はこちら</p>
             <a
               href={CHECKOUT_URL}

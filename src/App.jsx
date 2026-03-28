@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import InputForm from './components/InputForm'
 import ResultDashboard from './components/ResultDashboard'
 import SideJobList from './components/SideJobList'
@@ -15,7 +15,7 @@ const DEFAULT_VALUES = {
   mainJobIncome: '',
   sideIncome: '',
   sideExpense: '',
-  startMonth: 1,
+  startMonth: new Date().getMonth() + 1,
 }
 
 const DEFAULT_SIDE_JOBS = [{ name: '', income: '', expense: '' }]
@@ -41,6 +41,7 @@ export default function App() {
   const [sideJobs, setSideJobs] = useState(loadSideJobsFromStorage)
   const [result, setResult] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const proModalShownRef = useRef(false)
 
   const { isPro, isLoading, error, activate, setError } = usePro()
 
@@ -75,12 +76,9 @@ export default function App() {
           setResult(null)
         }
       } else {
-        // 無料版：単一副業モード
-        if (
-          sideIncome !== '' && sideIncome >= 0 &&
-          sideExpense !== '' && sideExpense >= 0
-        ) {
-          setResult(calculate({ mainJobIncome, sideIncome, sideExpense, startMonth }))
+        // 無料版：単一副業モード（0円でも計算する）
+        if (sideIncome !== '' && sideExpense !== '') {
+          setResult(calculate({ mainJobIncome, sideIncome: Number(sideIncome) || 0, sideExpense: Number(sideExpense) || 0, startMonth }))
         } else {
           setResult(null)
         }
@@ -89,6 +87,15 @@ export default function App() {
       setResult(null)
     }
   }, [inputs, sideJobs, isPro])
+
+  // 計算結果が初めて出たときにProモーダルを表示（1回だけ）
+  useEffect(() => {
+    if (result && !isPro && !proModalShownRef.current) {
+      proModalShownRef.current = true
+      const timer = setTimeout(() => setIsModalOpen(true), 1500)
+      return () => clearTimeout(timer)
+    }
+  }, [result, isPro])
 
   const handleExportCSV = () => {
     if (result) exportMonthlyCSV(result)
@@ -133,8 +140,13 @@ export default function App() {
         {/* Pro機能A：複数副業 */}
         {isPro ? (
           <SideJobList jobs={sideJobs} onChange={setSideJobs} />
-        ) : (
-          <ProGate onUpgrade={() => setIsModalOpen(true)} />
+        ) : null}
+
+        {/* 免責バナー（結果が出たときに上部に表示） */}
+        {result && (
+          <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-2.5 text-xs text-blue-700">
+            ※ 表示される金額はすべて参考値です。実際の税額とは異なる場合があります。詳細は税理士・税務署にご確認ください。
+          </div>
         )}
 
         {/* 計算結果 */}
@@ -150,8 +162,22 @@ export default function App() {
         {/* Pro機能C：節税アドバイス */}
         {isPro && result ? (
           <TaxAdvice result={result} />
-        ) : isPro ? null : (
-          <ProGate onUpgrade={() => setIsModalOpen(true)} />
+        ) : null}
+
+        {/* Pro誘導（非Pro時は1か所にまとめて表示） */}
+        {!isPro && (
+          <div className="bg-white rounded-2xl shadow-md p-6 border border-dashed border-gray-200">
+            <div className="flex flex-col items-center text-center py-4 space-y-3">
+              <span className="text-3xl">&#128274;</span>
+              <p className="text-sm font-medium text-gray-600">Pro版で複数副業の入力・節税アドバイスが使えます</p>
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-2 rounded-xl text-sm transition-colors"
+              >
+                Pro版へアップグレード
+              </button>
+            </div>
+          </div>
         )}
 
         {/* Pro機能B：CSVエクスポート */}
@@ -172,11 +198,15 @@ export default function App() {
           </div>
         )}
 
-        {/* 免責表示 */}
-        <p className="text-center text-xs text-gray-400 pb-6">
-          ※ 表示される金額はすべて参考値です。実際の税額とは異なる場合があります。詳細は税理士・税務署にご確認ください。
-        </p>
       </main>
+
+      <footer className="text-center text-xs text-gray-400 py-6 space-y-2">
+        <div className="flex justify-center gap-4">
+          <a href="/privacy" className="hover:text-gray-600 underline">プライバシーポリシー</a>
+          <a href="/terms" className="hover:text-gray-600 underline">利用規約</a>
+        </div>
+        <div>© 2026 副業ぜんぶ計算くん</div>
+      </footer>
 
       {/* Proアップグレードモーダル */}
       <ProModal

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 
 const LICENSE_KEY_STORAGE = 'fukugyo_license_key'
 const IS_PRO_STORAGE = 'fukugyo_is_pro'
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 export function usePro() {
   const [isPro, setIsPro] = useState(false)
@@ -14,7 +15,7 @@ export function usePro() {
     try {
       const savedKey = localStorage.getItem(LICENSE_KEY_STORAGE)
       const savedIsPro = localStorage.getItem(IS_PRO_STORAGE)
-      if (savedKey && savedIsPro === 'true') {
+      if (savedKey && savedIsPro === 'true' && UUID_REGEX.test(savedKey)) {
         setLicenseKey(savedKey)
         setIsPro(true)
       }
