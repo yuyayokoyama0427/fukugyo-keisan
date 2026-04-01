@@ -27,11 +27,21 @@ export function usePro() {
     setIsLoading(true)
     setError('')
     try {
-      const res = await fetch('/api/validate-license', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ licenseKey: key }),
-      })
+      let res
+      try {
+        res = await fetch('/api/validate-license', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ licenseKey: key }),
+        })
+      } catch (_) {
+        setError('通信エラーが発生しました。インターネット接続を確認してください。')
+        return false
+      }
+      if (!res.ok) {
+        setError(`サーバーエラーが発生しました（${res.status}）。しばらく経ってから再試行してください。`)
+        return false
+      }
       const data = await res.json()
       if (data.valid) {
         setIsPro(true)
@@ -44,7 +54,7 @@ export function usePro() {
         return false
       }
     } catch (_) {
-      setError('通信エラーが発生しました。しばらく経ってから再試行してください。')
+      setError('予期しないエラーが発生しました。しばらく経ってから再試行してください。')
       return false
     } finally {
       setIsLoading(false)

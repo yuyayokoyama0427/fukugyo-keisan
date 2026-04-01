@@ -88,12 +88,10 @@ export default function App() {
     }
   }, [inputs, sideJobs, isPro])
 
-  // 計算結果が初めて出たときにProモーダルを表示（1回だけ）
+  // proModalShownRef は将来の利用のため残す（自動表示は廃止）
   useEffect(() => {
-    if (result && !isPro && !proModalShownRef.current) {
+    if (result && !isPro) {
       proModalShownRef.current = true
-      const timer = setTimeout(() => setIsModalOpen(true), 1500)
-      return () => clearTimeout(timer)
     }
   }, [result, isPro])
 
@@ -134,6 +132,20 @@ export default function App() {
       </header>
 
       <main className="max-w-3xl mx-auto px-4 py-6 space-y-5">
+        {/* ファーストビュー説明（未計算時のみ表示） */}
+        {!result && (
+          <div className="bg-white rounded-2xl shadow-sm border border-blue-100 px-5 py-4">
+            <p className="text-xs font-bold text-blue-700 mb-2">このツールでわかること</p>
+            <ul className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs text-gray-600">
+              <li className="flex items-center gap-1.5"><span className="text-blue-400">✓</span>副業の手取り増加額</li>
+              <li className="flex items-center gap-1.5"><span className="text-blue-400">✓</span>所得税・住民税の増加分</li>
+              <li className="flex items-center gap-1.5"><span className="text-blue-400">✓</span>確定申告が必要かどうか</li>
+              <li className="flex items-center gap-1.5"><span className="text-blue-400">✓</span>会社バレのリスク判定</li>
+            </ul>
+            <p className="text-xs text-gray-400 mt-2.5">年間20万円超の副業収入がある方・副業を始めたばかりの方向け。登録不要・無料。</p>
+          </div>
+        )}
+
         {/* 基本入力フォーム */}
         <InputForm values={inputs} onChange={setInputs} hideSideFields={isPro} />
 

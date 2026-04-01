@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import AnnualChart from './AnnualChart'
 
 function formatYen(amount) {
@@ -44,6 +44,44 @@ function StatCard({ title, value, sub, accent }) {
       <p className="text-xs font-medium text-gray-500 mb-1">{title}</p>
       <p className="text-2xl font-bold text-gray-900 mb-1">{value}</p>
       {sub && <p className="text-xs text-gray-500">{sub}</p>}
+    </div>
+  )
+}
+
+function BaleRiskDetail({ baleRisk, annualSideNetIncome }) {
+  const [open, setOpen] = useState(false)
+
+  const criteriaText = (() => {
+    if (baleRisk === 'high') {
+      return `副業所得が年20万円（${(annualSideNetIncome / 10000).toFixed(1)}万円）を超えているため、確定申告が必要です。申告すると住民税が増加し、会社の経理担当者に気づかれる可能性があります。確定申告の際に「住民税の徴収方法：普通徴収」を選択することでリスクを軽減できます。`
+    }
+    if (baleRisk === 'medium') {
+      return `副業所得が0円超〜20万円以下（${(annualSideNetIncome / 10000).toFixed(1)}万円）のため、所得税の確定申告は不要です。ただし住民税の申告が必要な場合があり、その際に副業収入が反映されることがあります。申告時は「普通徴収」を選択しましょう。`
+    }
+    return `副業所得が0円のため現時点でリスクはありません。副業を始めたら再度計算してください。`
+  })()
+
+  return (
+    <div className="mt-2">
+      <button
+        type="button"
+        onClick={() => setOpen(prev => !prev)}
+        className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 transition-colors"
+      >
+        <svg
+          className={`w-3.5 h-3.5 transition-transform ${open ? 'rotate-90' : ''}`}
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path fillRule="evenodd" d="M7.293 4.293a1 1 0 011.414 0L14.414 10l-5.707 5.707a1 1 0 01-1.414-1.414L11.586 10 7.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+        </svg>
+        判定基準を見る
+      </button>
+      {open && (
+        <div className="mt-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 text-xs text-gray-600 leading-relaxed">
+          {criteriaText}
+        </div>
+      )}
     </div>
   )
 }
@@ -168,6 +206,7 @@ export default function ResultDashboard({ result }) {
                 <p>副業所得がない場合はリスクなし。副業を始めたら再計算してください。</p>
               )}
             </div>
+            <BaleRiskDetail baleRisk={baleRisk} annualSideNetIncome={annualSideNetIncome} />
           </div>
         </div>
       </div>
