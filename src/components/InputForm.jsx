@@ -2,12 +2,55 @@ import React, { useState } from 'react'
 
 const MONTHS = [1,2,3,4,5,6,7,8,9,10,11,12]
 
+const EXPENSE_EXAMPLES = [
+  'PCや周辺機器（仕事用）',
+  'ソフトウェア・サブスク代',
+  '書籍・教材費',
+  '通信費の一部（在宅ワーク分）',
+  '交通費（取材・打ち合わせ）',
+  '文房具・消耗品',
+]
+
 const TEMPLATES = [
   { label: 'フリーライター', income: 30, expense: 3 },
   { label: 'デザイナー',     income: 50, expense: 10 },
   { label: 'エンジニア',     income: 100, expense: 5 },
   { label: '動画編集',       income: 40, expense: 15 },
 ]
+
+function ExpenseHint({ income, expense }) {
+  const [open, setOpen] = useState(false)
+  const hasIncome = income !== '' && Number(income) > 0
+  const noExpense = expense === '' || Number(expense) === 0
+  if (!hasIncome || !noExpense) return null
+
+  return (
+    <div className="mt-2">
+      <button
+        type="button"
+        onClick={() => setOpen(v => !v)}
+        className="flex items-center gap-1 text-xs text-amber-600 hover:text-amber-800 transition-colors"
+      >
+        <span>💡</span>
+        <span>経費を計上すると手取りが増える可能性があります</span>
+        <span className={`transition-transform ${open ? 'rotate-180' : ''}`}>▾</span>
+      </button>
+      {open && (
+        <div className="mt-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2.5">
+          <p className="text-xs font-medium text-amber-800 mb-1.5">副業でよくある経費の例</p>
+          <ul className="space-y-1">
+            {EXPENSE_EXAMPLES.map((ex) => (
+              <li key={ex} className="text-xs text-amber-700 flex items-center gap-1.5">
+                <span className="text-amber-400">✓</span>{ex}
+              </li>
+            ))}
+          </ul>
+          <p className="text-xs text-amber-600 mt-2">経費を入力すると所得が減り、税金・確定申告の判定が変わります。</p>
+        </div>
+      )}
+    </div>
+  )
+}
 
 export default function InputForm({ values, onChange, hideSideFields = false }) {
   const [validationErrors, setValidationErrors] = useState({})
@@ -161,6 +204,7 @@ export default function InputForm({ values, onChange, hideSideFields = false }) 
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">万円</span>
             </div>
             <p className="text-xs text-gray-400 mt-1">材料費・交通費・ツール代など</p>
+            <ExpenseHint income={values.sideIncome} expense={values.sideExpense} />
           </div>
         )}
       </div>
